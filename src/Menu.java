@@ -1,35 +1,64 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 
-public class Menu {
-    private ArrayList<MenuItem> items;
+public class Menu extends MenuComponent{
+    protected ArrayList<MenuComponent> menuItems;
+
+    public Menu(ArrayList<MenuComponent> menuItems) {
+        this.menuItems = menuItems;
+    }
+
     public Menu() {
-        items = new ArrayList<>();
-        items.add(new MenuItem(1, "Banh Mi", 9.99));
-        items.add(new MenuItem(2, "Pho", 12.99));
-        items.add(new MenuItem(3, "Summer Rolls", 5.99));
+        this.menuItems = new ArrayList<>();
     }
-    public Menu(ArrayList<MenuItem> items) {
-        this.items = items;
+
+    public void add(MenuComponent item) {
+        menuItems.add(item);
     }
-    public void addItem(MenuItem item) {
-        items.add(item);
+
+    public void remove(MenuComponent item) {
+        menuItems.remove(item);
     }
-    public void removeItem(MenuItem item) {
-        items.remove(item);
+
+    public ArrayList<MenuComponent> getMenu(){
+        return menuItems;
     }
-    public ArrayList<MenuItem> getMenu(){
-        return items;
+
+    public Iterator createIterator(ArrayList<MenuComponent> menuItems) {
+        return new MenuComponentIterator(menuItems);
     }
-    public MenuItem getItem(OrderItem orderItem){
-        MenuItem reqItem = null;
-        for(MenuItem item : items){
-            if (item.getItemNo() == orderItem.getItemNo()){
-                reqItem = item;
+
+    public MenuItem getItem(OrderItem orderItem) {
+        MenuItem item = null;
+        for (MenuComponent menuItem : menuItems) {
+            if (menuItem instanceof Menu){
+                item = ((Menu) menuItem).getItem(orderItem);
+                if (item != null) {
+                    return item;
+                }
+            } else if (menuItem instanceof MenuItem && ((MenuItem) menuItem).getItem(orderItem)){
+                item = (MenuItem) menuItem;
+                return item;
             }
         }
-        return reqItem;
+        return null;
     }
-    public int size(){
-        return items.size();
+
+    public int size() {
+        return menuItems.size();
     }
+
+    public MenuComponent getChild(int index) {
+        return super.getChild(index);
+    }
+
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("MENU\n_________________\n");
+        for (MenuComponent menuItem : menuItems) {
+            sb.append(menuItem.toString()).append("\n");
+        }
+        return sb.toString();
+    }
+
 }

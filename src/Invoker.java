@@ -14,7 +14,7 @@ public class Invoker {
     public Invoker(Tab tab) {
         this.tab = tab;
     }
-    public String[] displayMenu(){
+    public String displayMenu(){
         DisplayMenu displayMenu = new DisplayMenu(menu);
         return displayMenu.execute();
     }
